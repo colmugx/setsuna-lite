@@ -48,5 +48,8 @@
     "undici": "*",
     "vite": "^5.2.10",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "dependencies": {
+    "qwik-speak": "^0.23.0"
   }
 }
