@@ -6,4 +6,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
+html,
+body {
+  background-color: transparent;
+  color: #333;
+  max-height: 100vh;
+}

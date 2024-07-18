@@ -18,7 +18,7 @@ export default component$(() => {
         <meta charset="utf-8" />
         <RouterHead />
       </head>
-      <body lang="en">
+      <body lang="en" class="overflow-hidden bg-zinc-100">
         <RouterOutlet />
       </body>
     </QwikCityProvider>
