@@ -65,6 +65,12 @@
         "open": true,
         "scope": [],
         "sidecar": false
+      },
+      "dialog": {
+        "message": true
+      },
+      "fs": {
+        "readFile": true
       }
     },
     "bundle": {
@@ -113,7 +119,6 @@
         "resizable": false,
         "title": "",
         "width": 500,
-        "transparent": true,
         "titleBarStyle": "Overlay"
       }
     ]

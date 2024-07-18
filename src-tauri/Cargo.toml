@@ -17,7 +17,9 @@ tauri-build = { version = "1.5.3", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.7.0", features = [ "system-tray", "shell-open", "window-start-dragging", "http-all"] }
+tauri = { version = "1.7.0", features = [ "fs-read-file", "dialog-message", "system-tray", "shell-open", "window-start-dragging", "http-all"] }
+cocoa = "0.25.0"
+objc = "0.2.7"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
