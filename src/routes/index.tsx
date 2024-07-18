@@ -14,6 +14,18 @@ import { JiraEngine } from "~/engines/jira";
 import { GitHubEngine } from "~/engines/github";
 import { dialog, fs, invoke } from "@tauri-apps/api";
 import type { TConfig } from "~/entities/config.type";
+import { nonEmpty, object, parse, pipe, string, ValiError } from 'valibot'
+
+const configSchema = object({
+  jira: object({
+    host: pipe(string(), nonEmpty()),
+    email: pipe(string(), nonEmpty()),
+    token: pipe(string(), nonEmpty()),
+  }),
+  github: object({
+    token: pipe(string(), nonEmpty()),
+  }),
+})
 
 export default component$(() => {
   const config = useSignal<TConfig>();
@@ -51,12 +63,18 @@ export default component$(() => {
         });
 
         if (file) {
-          fs.readTextFile(file as string).then((content) => {
-            // eslint-disable-next-line qwik/valid-lexical-scope
-            config.value = JSON.parse(content);
+          try {
+            const content = await fs.readTextFile(file as string)
+            const data = parse(configSchema, JSON.parse(content))
+            console.log(data)
+            config.value = data;
 
             handleFetch();
-          });
+          } catch (error) {
+            if (error instanceof ValiError) {
+              dialog.message("Error", error.message);
+            }
+          }
         } else {
           dialog.message("Error", "No file selected");
         }
