@@ -12,16 +12,22 @@ import Card from "~/components/card/card";
 import { TaskService } from "~/services/task.service";
 import { JiraEngine } from "~/engines/jira";
 import { GitHubEngine } from "~/engines/github";
+import { dialog, fs, invoke } from "@tauri-apps/api";
+import type { TConfig } from "~/entities/config.type";
 
 export default component$(() => {
+  const config = useSignal<TConfig>();
   const fetchAtom = useSignal(0);
 
   const resource = useResource$(async ({ track }) => {
-    const service = new TaskService([new JiraEngine(), new GitHubEngine()]);
     track(() => fetchAtom.value);
 
     if (isBrowser && fetchAtom.value) {
+      const service = new TaskService([new JiraEngine(config.value!.jira), new GitHubEngine(config.value!.github)]);
       const list = await service.list();
+
+      // 修改 badge
+      invoke('set_badge', { count: list.length });
 
       return list.map((task) => task.toJSON());
     } else {
@@ -29,17 +35,51 @@ export default component$(() => {
     }
   });
 
+  const handleFetch = $(() => {
+    fetchAtom.value++;
+  })
+
+  const readConfig = $(async () => {
+    if (isBrowser) {
+      if (!config.value) {
+        const file = await dialog.open({
+          filters: [{ name: 'JSON', extensions: ['json'] }],
+          multiple: false,
+          directory: false,
+          defaultPath: '.',
+          title: '选择配置文件'
+        });
+
+        if (file) {
+          fs.readTextFile(file as string).then((content) => {
+            // eslint-disable-next-line qwik/valid-lexical-scope
+            config.value = JSON.parse(content);
+
+            handleFetch();
+          });
+        } else {
+          dialog.message("Error", "No file selected");
+        }
+      }
+    }
+  })
+
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     if (isBrowser) {
-      fetchAtom.value++;
+      readConfig()
     }
   });
 
   const handleClick = $(() => {
-    fetchAtom.value++;
-  });
+    // eslint-disable-next-line qwik/valid-lexical-scope
+    if (!config.value) {
+      readConfig();
+      return;
+    }
 
+    handleFetch();
+  });
   return (
     <div>
       <div data-tauri-drag-region class="flex h-8 justify-end px-2 py-1">

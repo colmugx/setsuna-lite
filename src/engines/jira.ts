@@ -1,13 +1,24 @@
 import { getClient } from "@tauri-apps/api/http";
 import type { Engine } from "./engine";
 import { EOrigin, TaskEntity, TaskStatus } from "~/entities/task";
+import type { TConfig } from "~/entities/config.type";
 
 export class JiraEngine implements Engine {
-  private readonly Host = '__JIRA_HOST__'
-  private readonly jiraApiUrl = `${this.Host}/rest/api/3/search?jql=assignee=currentUser()`
+  private host = '__JIRA_HOST__'
   private email = '__JIRA_EMAIL__'
   private token = '__JIRA_TOKEN__'
-  private readonly openPrefix = `${this.Host}/browse/`;
+
+  private jiraApiUrl = ''
+  private openPrefix = ''
+
+  constructor(config: TConfig['jira']) {
+    this.host = config.host;
+    this.email = config.email;
+    this.token = config.token;
+
+    this.jiraApiUrl = `${this.host}/rest/api/3/search?jql=assignee=currentUser()`
+    this.openPrefix = `${this.host}/browse/`;
+  }
 
   async list() {
     const client = await getClient();

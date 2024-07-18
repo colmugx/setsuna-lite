@@ -67,6 +67,7 @@
         "sidecar": false
       },
       "dialog": {
+        "open": true,
         "message": true
       },
       "fs": {

@@ -1,10 +1,15 @@
 import { getClient } from "@tauri-apps/api/http";
 import type { Engine } from "./engine";
 import { EOrigin, TaskEntity, TaskStatus } from "~/entities/task";
+import type { TConfig } from "~/entities/config.type";
 
 export class GitHubEngine implements Engine {
   private readonly apiUrl = "https://api.github.com/notifications";
   private token = "__GITHUB_TOKEN__";
+
+  constructor(config: TConfig["github"]) {
+    this.token = config.token;
+  }
 
   async list() {
     const client = await getClient();
