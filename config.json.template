@@ -1,0 +1,10 @@
+{
+  "jira": {
+    "host": "__HOST__",
+    "email": "__EMAIL__",
+    "token": "__TOKEN__"
+  },
+  "github": {
+    "token": "__TOKEN__"
+  }
+}
